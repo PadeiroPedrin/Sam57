@@ -216,7 +216,7 @@ router.post('/obs-stop', authMiddleware, async (req, res) => {
 router.get('/recordings', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
-    const userLogin = req.user.email.split('@')[0];
+    const userLogin = req.user.usuario || req.user.email?.split('@')[0] || `user_${userId}`;
     
     // Inicializar serviço Wowza
     const wowzaService = new WowzaStreamingService();

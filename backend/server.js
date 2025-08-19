@@ -351,7 +351,7 @@ const smilManagementRoutes = require('./routes/smil-management');
       try {
         // Buscar servidor baseado no usuário
         const [userServerRows] = await db.execute(
-          'SELECT codigo_servidor FROM streamings WHERE codigo_cliente = ? OR login = ? LIMIT 1',
+          'SELECT codigo_servidor FROM streamings WHERE codigo_cliente = ? OR usuario = ? LIMIT 1',
           [req.user.userId, userLogin]
         );
         
