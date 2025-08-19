@@ -32,7 +32,7 @@ const authMiddleware = async (req, res, next) => {
       // Buscar baseado no tipo de usuário
       if (decoded.tipo === 'revenda') {
         [rows] = await db.execute(
-          'SELECT codigo, nome, email, streamings, espectadores, bitrate, espaco, status, "revenda" as tipo FROM revendas WHERE codigo = ? AND status = 1',
+          'SELECT codigo, nome, email, usuario, streamings, espectadores, bitrate, espaco, status, "revenda" as tipo FROM revendas WHERE codigo = ? AND status = 1',
           [decoded.userId]
         );
       } else if (decoded.tipo === 'streaming') {
@@ -41,6 +41,7 @@ const authMiddleware = async (req, res, next) => {
             s.codigo, 
             s.identificacao as nome, 
             s.email, 
+            s.usuario,
             1 as streamings, 
             s.espectadores, 
             s.bitrate, 
@@ -69,6 +70,7 @@ const authMiddleware = async (req, res, next) => {
         id: user.codigo,
         nome: user.nome,
         email: user.email,
+        usuario: user.usuario,
         tipo: user.tipo || 'streaming', // Valor padrão se não estiver definido
         streamings: user.streamings,
         espectadores: user.espectadores,
@@ -81,6 +83,7 @@ const authMiddleware = async (req, res, next) => {
       console.log('✅ Usuário autenticado:', {
         id: user.codigo,
         email: user.email,
+        usuario: user.usuario,
         tipo: user.tipo,
         path: req.path
       });

@@ -10,15 +10,16 @@ const JWT_SECRET = process.env.JWT_SECRET || 'sua_chave_secreta_super_segura_aqu
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    const loginInput = email; // Pode ser email ou usuário
 
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+    if (!loginInput || !password) {
+      return res.status(400).json({ error: 'Email/usuário e senha são obrigatórios' });
     }
 
     // Buscar primeiro em revendas
     let [rows] = await db.execute(
-      'SELECT codigo, nome, email, senha, streamings, espectadores, bitrate, espaco, status, "revenda" as tipo FROM revendas WHERE email = ?',
-      [email]
+      'SELECT codigo, nome, email, usuario, senha, streamings, espectadores, bitrate, espaco, status, "revenda" as tipo FROM revendas WHERE email = ? OR usuario = ?',
+      [loginInput, loginInput]
     );
 
     // Se não encontrou em revendas, buscar em streamings
@@ -28,6 +29,7 @@ router.post('/login', async (req, res) => {
           s.codigo, 
           s.identificacao as nome, 
           s.email, 
+          s.usuario,
           s.senha, 
           1 as streamings, 
           s.espectadores, 
@@ -38,8 +40,8 @@ router.post('/login', async (req, res) => {
           s.codigo_cliente,
           s.codigo_servidor
          FROM streamings s 
-         WHERE s.email = ?`,
-        [email]
+         WHERE s.email = ? OR s.usuario = ?`,
+        [loginInput, loginInput]
       );
     }
 
@@ -77,7 +79,8 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign(
       { 
         userId: user.codigo, 
-        email: user.email, 
+        email: user.email,
+        usuario: user.usuario,
         tipo: user.tipo,
         codigo_cliente: user.codigo_cliente || null,
         codigo_servidor: user.codigo_servidor || null
@@ -93,6 +96,7 @@ router.post('/login', async (req, res) => {
         id: user.codigo,
         nome: user.nome,
         email: user.email,
+        usuario: user.usuario,
         tipo: user.tipo,
         streamings: user.streamings,
         espectadores: user.espectadores,
@@ -138,7 +142,7 @@ router.get('/me', async (req, res) => {
     // Buscar baseado no tipo de usuário
     if (decoded.tipo === 'revenda') {
       [rows] = await db.execute(
-        'SELECT codigo, nome, email, streamings, espectadores, bitrate, espaco, status, "revenda" as tipo FROM revendas WHERE codigo = ? AND status = 1',
+        'SELECT codigo, nome, email, usuario, streamings, espectadores, bitrate, espaco, status, "revenda" as tipo FROM revendas WHERE codigo = ? AND status = 1',
         [decoded.userId]
       );
     } else if (decoded.tipo === 'streaming') {
@@ -147,6 +151,7 @@ router.get('/me', async (req, res) => {
           s.codigo, 
           s.identificacao as nome, 
           s.email, 
+          s.usuario,
           1 as streamings, 
           s.espectadores, 
           s.bitrate, 
@@ -170,6 +175,8 @@ router.get('/me', async (req, res) => {
       id: user.codigo,
       nome: user.nome,
       email: user.email,
+      usuario: user.usuario,
+      usuario: user.usuario,
       tipo: user.tipo,
       streamings: user.streamings,
       espectadores: user.espectadores,
@@ -182,6 +189,7 @@ router.get('/me', async (req, res) => {
     console.error('Erro ao buscar usuário:', error);
     res.status(401).json({ error: 'Token inválido' });
   }
+      usuario: user.usuario,
 });
 
 module.exports = router;

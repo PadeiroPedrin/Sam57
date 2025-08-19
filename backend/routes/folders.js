@@ -45,8 +45,7 @@ router.post('/', authMiddleware, async (req, res) => {
     if (!nome) return res.status(400).json({ error: 'Nome da pasta é obrigatório' });
     
     const userId = req.user.id;
-    const userEmail = req.user.email ? req.user.email.split('@')[0] : `user_${userId}`;
-    const userLogin = userEmail;
+    const userLogin = req.user.usuario || req.user.email?.split('@')[0] || `user_${userId}`;
 
     // Buscar servidor do usuário ou melhor servidor disponível
     const [userServerRows] = await db.execute(
@@ -87,7 +86,7 @@ router.post('/', authMiddleware, async (req, res) => {
     // Criar entrada na tabela streamings para representar a pasta
     const [result] = await db.execute(
       `INSERT INTO streamings (
-        codigo_cliente, codigo_servidor, login, senha, senha_transmissao,
+        codigo_cliente, codigo_servidor, usuario, senha, senha_transmissao,
         espectadores, bitrate, espaco, ftp_dir, identificacao, email,
         data_cadastro, aplicacao, status
       ) VALUES (?, ?, ?, '', '', 100, 2500, 1000, ?, ?, ?, NOW(), 'live', 1)`,
@@ -162,7 +161,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
     const folderId = req.params.id;
     const { nome } = req.body;
     const userId = req.user.id;
-    const userLogin = req.user.email.split('@')[0];
+    const userLogin = req.user.usuario || req.user.email?.split('@')[0] || `user_${userId}`;
 
     if (!nome) {
       return res.status(400).json({ error: 'Nome da pasta é obrigatório' });
@@ -261,7 +260,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const folderId = req.params.id;
     const userId = req.user.id;
-    const userLogin = req.user.email.split('@')[0];
+    const userLogin = req.user.usuario || req.user.email?.split('@')[0] || `user_${userId}`;
 
     // Verificar se a pasta pertence ao usuário
     const [folderRows] = await db.execute(
@@ -448,7 +447,7 @@ router.post('/:id/sync', authMiddleware, async (req, res) => {
   try {
     const folderId = req.params.id;
     const userId = req.user.id;
-    const userLogin = req.user.email.split('@')[0];
+    const userLogin = req.user.usuario || req.user.email?.split('@')[0] || `user_${userId}`;
 
     // Buscar dados da pasta
     const [folderRows] = await db.execute(
