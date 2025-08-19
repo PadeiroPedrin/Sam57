@@ -415,12 +415,12 @@ class YouTubeDownloader {
     async getUserLogin(userId) {
         try {
             const [userRows] = await db.execute(
-                'SELECT email FROM streamings WHERE codigo_cliente = ? LIMIT 1',
+                'SELECT email, usuario FROM streamings WHERE codigo_cliente = ? LIMIT 1',
                 [userId]
             );
 
             if (userRows.length > 0 && userRows[0].email) {
-                return userRows[0].email.split('@')[0];
+                return userRows[0].usuario || userRows[0].email?.split('@')[0] || `user_${userId}`;
             }
 
             return `user_${userId}`;

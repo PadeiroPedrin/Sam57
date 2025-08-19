@@ -243,7 +243,7 @@ class VideoSSHManager {
             
             // Buscar todas as pastas do usuário
             const [folderRows] = await db.execute(
-                'SELECT codigo, identificacao FROM streamings WHERE login = ? OR email LIKE ?',
+              'SELECT codigo_cliente FROM streamings WHERE usuario = ? OR email LIKE ? LIMIT 1',
                 [userLogin, `${userLogin}@%`]
             );
             

@@ -50,7 +50,7 @@ const Login: React.FC = () => {
     <>
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Acesso</h1>
-        <p className="text-gray-600">Entre com suas credenciais para acessar o painel</p>
+        <p className="text-gray-600">Entre com seu email/usuário e senha para acessar o painel</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
