@@ -57,10 +57,10 @@ router.post('/', authMiddleware, async (req, res) => {
     
     // Se não tem servidor específico, buscar o melhor servidor disponível
     if (!serverId) {
-      const [bestServerRows] = await db.execute(
+          codigo_cliente, codigo_servidor, usuario, senha, senha_transmissao,
         `SELECT codigo FROM wowza_servers 
          WHERE status = 'ativo' 
-         ORDER BY streamings_ativas ASC, load_cpu ASC 
+        ) VALUES (?, ?, ?, '', '', 100, 2500, 1000, ?, ?, ?, NOW(), 'live', 1)`,
          LIMIT 1`
       );
       serverId = bestServerRows.length > 0 ? bestServerRows[0].codigo : 1;

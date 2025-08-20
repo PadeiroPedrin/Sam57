@@ -51,7 +51,7 @@ const authMiddleware = async (req, res, next) => {
             s.codigo_cliente,
             s.codigo_servidor
            FROM streamings s 
-           WHERE s.codigo = ? AND s.status = 1`,
+           WHERE s.codigo_cliente = ? AND s.status = 1 LIMIT 1`,
           [decoded.userId]
         );
       }

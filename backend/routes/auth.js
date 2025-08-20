@@ -18,7 +18,7 @@ router.post('/login', async (req, res) => {
 
     // Buscar primeiro em revendas
     let [rows] = await db.execute(
-      'SELECT codigo, nome, email, usuario, senha, streamings, espectadores, bitrate, espaco, status, "revenda" as tipo FROM revendas WHERE email = ? OR usuario = ?',
+      'SELECT codigo, nome, email, usuario, senha, streamings, espectadores, bitrate, espaco, status, "revenda" as tipo FROM revendas WHERE (email = ? OR usuario = ?) AND status = 1',
       [loginInput, loginInput]
     );
 
@@ -40,7 +40,7 @@ router.post('/login', async (req, res) => {
           s.codigo_cliente,
           s.codigo_servidor
          FROM streamings s 
-         WHERE s.email = ? OR s.usuario = ?`,
+         WHERE (s.email = ? OR s.usuario = ?) AND s.status = 1`,
         [loginInput, loginInput]
       );
     }
@@ -142,7 +142,7 @@ router.get('/me', async (req, res) => {
     // Buscar baseado no tipo de usuário
     if (decoded.tipo === 'revenda') {
       [rows] = await db.execute(
-        'SELECT codigo, nome, email, usuario, streamings, espectadores, bitrate, espaco, status, "revenda" as tipo FROM revendas WHERE codigo = ? AND status = 1',
+        'SELECT codigo, nome, email, usuario, streamings, espectadores, bitrate, espaco, status, "revenda" as tipo FROM revendas WHERE codigo = ?',
         [decoded.userId]
       );
     } else if (decoded.tipo === 'streaming') {
@@ -161,7 +161,7 @@ router.get('/me', async (req, res) => {
           s.codigo_cliente,
           s.codigo_servidor
          FROM streamings s 
-         WHERE s.codigo = ? AND s.status = 1`,
+         WHERE s.codigo = ?`,
         [decoded.userId]
       );
     }
@@ -171,11 +171,16 @@ router.get('/me', async (req, res) => {
     }
 
     const user = rows[0];
+    
+    // Verificar se usuário está ativo
+    if (user.status !== 1) {
+      return res.status(401).json({ error: 'Conta desativada' });
+    }
+    
     res.json({
       id: user.codigo,
       nome: user.nome,
       email: user.email,
-      usuario: user.usuario,
       usuario: user.usuario,
       tipo: user.tipo,
       streamings: user.streamings,
@@ -189,7 +194,6 @@ router.get('/me', async (req, res) => {
     console.error('Erro ao buscar usuário:', error);
     res.status(401).json({ error: 'Token inválido' });
   }
-      usuario: user.usuario,
 });
 
 module.exports = router;

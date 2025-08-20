@@ -1,4 +1,3 @@
-const SSHManager = require('./SSHManager');
 const db = require('./database');
 
 class WowzaConfigManager {
@@ -33,6 +32,7 @@ class WowzaConfigManager {
 
     // Criar diretório de streaming: /home/streaming/[usuario]/
     async createUserStreamingDirectory(serverId, userLogin) {
+        const SSHManager = require('./SSHManager');
         const userStreamingPath = `${this.streamingBasePath}/${userLogin}`;
 
         const commands = [
@@ -55,6 +55,7 @@ class WowzaConfigManager {
 
     // Criar pasta específica do usuário: /home/streaming/[usuario]/[pasta]
     async createUserFolder(serverId, userLogin, folderName) {
+        const SSHManager = require('./SSHManager');
         const folderPath = `${this.streamingBasePath}/${userLogin}/${folderName}`;
 
         const commands = [
@@ -74,6 +75,7 @@ class WowzaConfigManager {
 
     // Criar diretório de configuração: /usr/local/WowzaStreamingEngine-4.8.0/conf/[usuario]/
     async createUserWowzaConfig(serverId, userLogin, userConfig) {
+        const SSHManager = require('./SSHManager');
         const userConfPath = `${this.confPath}/${userLogin}`;
 
         const commands = [
@@ -92,6 +94,7 @@ class WowzaConfigManager {
 
     // Criar Application.xml baseado no template
     async createApplicationXML(serverId, userLogin, userConfig) {
+        const SSHManager = require('./SSHManager');
         const userConfPath = `${this.confPath}/${userLogin}`;
         const applicationPath = `${userConfPath}/Application.xml`;
 
@@ -408,6 +411,7 @@ class WowzaConfigManager {
 
     // Criar aliasmap.play.txt
     async createAliasMapPlay(serverId, userLogin) {
+        const SSHManager = require('./SSHManager');
         const userConfPath = `${this.confPath}/${userLogin}`;
         const aliasPlayPath = `${userConfPath}/aliasmap.play.txt`;
 
@@ -434,6 +438,7 @@ class WowzaConfigManager {
 
     // Criar aliasmap.stream.txt
     async createAliasMapStream(serverId, userLogin) {
+        const SSHManager = require('./SSHManager');
         const userConfPath = `${this.confPath}/${userLogin}`;
         const aliasStreamPath = `${userConfPath}/aliasmap.stream.txt`;
 
@@ -460,6 +465,7 @@ class WowzaConfigManager {
 
     // Criar publish.password
     async createPublishPassword(serverId, userLogin, userPassword) {
+        const SSHManager = require('./SSHManager');
         const userConfPath = `${this.confPath}/${userLogin}`;
         const passwordPath = `${userConfPath}/publish.password`;
 
@@ -489,6 +495,7 @@ class WowzaConfigManager {
     // Cria e envia o arquivo SMIL
     async createPlaylistSMIL(serverId, userLogin, playlistData) {
         try {
+            const SSHManager = require('./SSHManager');
             const userStreamingPath = `${this.streamingBasePath}/${userLogin}`;
             const smilPath = `${userStreamingPath}/playlists_agendamentos.smil`;
 
@@ -551,6 +558,7 @@ class WowzaConfigManager {
     // Criar arquivo .ftpquota para controle de espaço
     async createFTPQuota(serverId, userLogin, quotaMB) {
         try {
+            const SSHManager = require('./SSHManager');
             const userStreamingPath = `${this.streamingBasePath}/${userLogin}`;
             const quotaPath = `${userStreamingPath}/.ftpquota`;
 
@@ -607,6 +615,7 @@ class WowzaConfigManager {
     // Verificar se estrutura do usuário existe
     async checkUserStructure(serverId, userLogin) {
         try {
+            const SSHManager = require('./SSHManager');
             const streamingPath = `${this.streamingBasePath}/${userLogin}`;
             const confPath = `${this.confPath}/${userLogin}`;
 
@@ -650,6 +659,7 @@ class WowzaConfigManager {
     // Verificar se diretório existe
     async checkDirectoryExists(serverId, path) {
         try {
+            const SSHManager = require('./SSHManager');
             const command = `test -d "${path}" && echo "EXISTS" || echo "NOT_EXISTS"`;
             const result = await SSHManager.executeCommand(serverId, command);
             return result.stdout.includes('EXISTS');
@@ -661,6 +671,7 @@ class WowzaConfigManager {
     // Verificar se arquivo existe
     async checkFileExists(serverId, path) {
         try {
+            const SSHManager = require('./SSHManager');
             const command = `test -f "${path}" && echo "EXISTS" || echo "NOT_EXISTS"`;
             const result = await SSHManager.executeCommand(serverId, command);
             return result.stdout.includes('EXISTS');
@@ -672,6 +683,7 @@ class WowzaConfigManager {
     // Atualizar configuração do usuário
     async updateUserConfig(serverId, userLogin, userConfig) {
         try {
+            const SSHManager = require('./SSHManager');
             // Recriar Application.xml com novas configurações
             await this.createApplicationXML(serverId, userLogin, userConfig);
 
@@ -692,6 +704,7 @@ class WowzaConfigManager {
     // Remover estrutura do usuário
     async removeUserStructure(serverId, userLogin) {
         try {
+            const SSHManager = require('./SSHManager');
             const streamingPath = `${this.streamingBasePath}/${userLogin}`;
             const confPath = `${this.confPath}/${userLogin}`;
 
@@ -714,6 +727,7 @@ class WowzaConfigManager {
     // Listar vídeos do usuário na nova estrutura
     async listUserVideos(serverId, userLogin, folderName = null) {
         try {
+            const SSHManager = require('./SSHManager');
             const basePath = `${this.streamingBasePath}/${userLogin}`;
             const searchPath = folderName ? `${basePath}/${folderName}` : basePath;
 
@@ -771,6 +785,7 @@ class WowzaConfigManager {
     // Migrar vídeo para nova estrutura
     async migrateVideoToNewStructure(serverId, userLogin, folderName, oldPath, fileName) {
         try {
+            const SSHManager = require('./SSHManager');
             // Garantir que estrutura existe
             await this.createUserStreamingDirectory(serverId, userLogin);
             await this.createUserFolder(serverId, userLogin, folderName);

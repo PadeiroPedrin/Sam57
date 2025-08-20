@@ -1,7 +1,6 @@
 const { Client } = require('ssh2');
 const fs = require('fs');
 const path = require('path');
-const WowzaConfigManager = require('./WowzaConfigManager');
 
 class SSHManager {
     constructor() {
@@ -205,6 +204,7 @@ class SSHManager {
     // Criar estrutura completa do usuário (streaming + wowza)
     async createCompleteUserStructure(serverId, userLogin, userConfig) {
         try {
+            const WowzaConfigManager = require('./WowzaConfigManager');
             console.log(`🏗️ Criando estrutura completa para usuário: ${userLogin}`);
 
             // 1. Criar estrutura de streaming
@@ -229,6 +229,7 @@ class SSHManager {
     // Verificar estrutura completa do usuário
     async checkCompleteUserStructure(serverId, userLogin) {
         try {
+            const WowzaConfigManager = require('./WowzaConfigManager');
             // Verificar estrutura de streaming
             const streamingPath = `/home/streaming/${userLogin}`;
             const streamingExists = await this.checkDirectoryExists(serverId, streamingPath);

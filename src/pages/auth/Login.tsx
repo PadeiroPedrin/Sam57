@@ -56,17 +56,17 @@ const Login: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            E-mail
+            E-mail ou Usuário
           </label>
           <input
             id="email"
             name="email"
-            type="email"
+            type="text"
             required
             className={`w-full px-4 py-2 border rounded-md focus:ring-primary-500 focus:border-primary-500 ${
               errors.email ? 'border-red-500' : 'border-gray-300'
             }`}
-            placeholder="seu@email.com"
+            placeholder="seu@email.com ou seu_usuario"
             value={formData.email}
             onChange={handleChange}
           />

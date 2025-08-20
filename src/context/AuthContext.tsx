@@ -13,7 +13,7 @@ const userSchema = z.object({
   espectadores: z.number(),
   bitrate: z.number(),
   espaco: z.number(),
-  codigo_cliente: z.number().nullable().optional(),
+  email: z.string().min(1, 'Email ou usuário é obrigatório'),
   codigo_servidor: z.number().nullable().optional(),
 });
 
