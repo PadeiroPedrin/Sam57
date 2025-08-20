@@ -201,8 +201,8 @@ router.post('/upload', authMiddleware, upload.single('video'), async (req, res) 
         s.codigo_servidor, s.identificacao as folder_name,
         s.espaco, s.espaco_usado
        FROM streamings s 
-       WHERE s.codigo = ? AND s.codigo_cliente = ?`,
-      [folderId, userId]
+       WHERE s.codigo = ? AND (s.codigo_cliente = ? OR s.codigo = ?)`,
+      [folderId, userId, userId]
     );
     if (userRows.length === 0) {
       console.log(`❌ Pasta ${folderId} não encontrada para usuário ${userId}`);
@@ -390,8 +390,8 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 
     // Buscar dados do vídeo
     const [videoRows] = await db.execute(
-      'SELECT caminho, nome, tamanho_arquivo FROM videos WHERE id = ? AND codigo_cliente = ?',
-      [videoId, userId]
+      'SELECT caminho, nome, tamanho_arquivo FROM videos WHERE id = ? AND (codigo_cliente = ? OR codigo_cliente IN (SELECT codigo FROM streamings WHERE codigo_cliente = ?))',
+      [videoId, userId, userId]
     );
     if (videoRows.length === 0) {
       return res.status(404).json({ error: 'Vídeo não encontrado' });

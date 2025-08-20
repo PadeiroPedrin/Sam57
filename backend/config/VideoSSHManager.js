@@ -178,7 +178,7 @@ class VideoSSHManager {
                     if (existingRows.length === 0) {
                         // Buscar código do cliente baseado no userLogin
                         const [clienteRows] = await db.execute(
-                            'SELECT codigo_cliente FROM streamings WHERE login = ? OR email LIKE ? LIMIT 1',
+                            'SELECT codigo_cliente FROM streamings WHERE usuario = ? OR email LIKE ? LIMIT 1',
                             [userLogin, `${userLogin}@%`]
                         );
                         
@@ -243,7 +243,7 @@ class VideoSSHManager {
             
             // Buscar todas as pastas do usuário
             const [folderRows] = await db.execute(
-                'SELECT codigo, identificacao FROM streamings WHERE usuario = ? OR email LIKE ?',
+                'SELECT codigo, identificacao, codigo_cliente FROM streamings WHERE usuario = ? OR email LIKE ?',
                 [userLogin, `${userLogin}@%`]
             );
             
@@ -253,7 +253,7 @@ class VideoSSHManager {
                     `SELECT COALESCE(SUM(CEIL(tamanho_arquivo / (1024 * 1024))), 0) as used_mb
                      FROM videos 
                      WHERE pasta = ? AND codigo_cliente = ?`,
-                    [folder.codigo, folder.codigo_cliente || null]
+                    [folder.codigo, folder.codigo_cliente]
                 );
                 
                 const usedMB = spaceRows[0]?.used_mb || 0;
